@@ -11,6 +11,7 @@ import {
   
   @Injectable()
   export class AuthGuard implements CanActivate {
+    hello = () =>{console.log('hello...')}
     constructor(private jwtService: JwtService) {}
   
     async canActivate(context: ExecutionContext): Promise<boolean> {
