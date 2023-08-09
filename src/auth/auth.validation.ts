@@ -2,13 +2,14 @@
 import { ArgumentMetadata, Injectable, PipeTransform, BadRequestException } from '@nestjs/common';
 import { isAddress } from 'web3-validator';
 import { SignupDto } from './dto/signup';
+import { AddUserDto } from 'src/user/dto/add-user';
 
 @Injectable()
 export class EthereumAddressValidationPipe implements PipeTransform {
-  transform(signupDto: SignupDto, metadata: ArgumentMetadata) {
-    if (!isAddress(signupDto.address)) {
+  transform(addUserDto: AddUserDto, metadata: ArgumentMetadata) {
+    if (!isAddress(addUserDto.walletAddress)) {
       throw new BadRequestException('Invalid Ethereum address');
     }
-    return signupDto;
+    return addUserDto;
   }
 }

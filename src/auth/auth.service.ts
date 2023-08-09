@@ -3,25 +3,24 @@ import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { SignupDto } from './dto/signup';
-import { Axios } from 'axios';
 import Moralis from 'moralis';
 import { Web3 } from 'web3';
+import { AddUserDto } from 'src/user/dto/add-user';
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UserService,
+    private userService: UserService,
     private jwtService: JwtService,
   ) {}
   async signIn(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findUser(username);
-    if (user?.password !== pass) {
+    const user = await this.userService.getUserByName(username);
+    if (user[0].password !== pass) {
       throw new UnauthorizedException();
     }
     // generating JWT after authentictaion...
     const payload = {
-      sub: user.userId,
-      username: user.username,
-      password: user.password,
+      username: user[0].name,
+      password: user[0].password,
     };
     console.log('payload: ', payload);
     return {
@@ -32,8 +31,8 @@ export class AuthService {
     // return "working fine...";
   }
 
-  async signUp(signupDto: SignupDto): Promise<any> {
-    return await this.requestMoralis(signupDto.address, signupDto.chainId);
+  async signUp(addUserDto: AddUserDto): Promise<any> {
+    return await this.userService.addUser(addUserDto);
   }
 
   async requestMoralis(address: string, chain: string): Promise<any> {

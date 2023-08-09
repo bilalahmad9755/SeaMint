@@ -4,6 +4,7 @@ import { LoginDto } from './dto/login';
 import { SignupDto } from './dto/signup';
 import { EthereumAddressValidationPipe } from './auth.validation';
 import { response } from 'express';
+import { AddUserDto } from 'src/user/dto/add-user';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -17,8 +18,8 @@ export class AuthController {
 
   @Post('signup')
   @UsePipes(new EthereumAddressValidationPipe())
-  async signUp(@Body() signupDto: SignupDto) {
-    return this.authService.signUp(signupDto);
+  async signUp(@Body() addUserDto: AddUserDto) {
+    return this.authService.signUp(addUserDto);
   }
 
   @Post('signup/verify')
