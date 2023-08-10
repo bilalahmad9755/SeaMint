@@ -13,6 +13,7 @@ import { UserModule } from './user/user.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { AuctionModule } from './auction/auction.module';
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://localhost:27017/seaMint'),
@@ -21,6 +22,7 @@ import { JwtService } from '@nestjs/jwt';
     ]),
     AuthModule,
     UserModule,
+    AuctionModule,
   ],
   controllers: [AppController, CollectionController, AuthController],
   providers: [AppService, CollectionService, AuthService, JwtService],

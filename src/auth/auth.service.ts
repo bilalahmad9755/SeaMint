@@ -2,7 +2,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
-import { SignupDto } from './dto/signup';
 import Moralis from 'moralis';
 import { Web3 } from 'web3';
 import { AddUserDto } from 'src/user/dto/add-user';
