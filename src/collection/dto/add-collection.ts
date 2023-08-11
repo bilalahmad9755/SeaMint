@@ -1,4 +1,9 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
+import { IAuction } from 'src/nft/auction.interface';
+export interface INFT{
+    id: string;
+    auction: IAuction
+}
 export class AddCollectionDto
 {
     @IsNotEmpty()
@@ -21,6 +26,8 @@ export class AddCollectionDto
 
     @IsNotEmpty()
     category: string;
+    
+    nft: INFT[];
 
     @IsNotEmpty()
     description: string;
