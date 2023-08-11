@@ -1,5 +1,4 @@
-export class OfferBidDto
-{
-    price: string;
-    buyerAddress: string;
+export class OfferBidDto {
+  price: string;
+  buyerAddress: string;
 }

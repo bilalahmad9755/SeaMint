@@ -3,10 +3,9 @@ import { AddAuctionDto } from './dto/add-auction';
 
 @Injectable()
 export class NftService {
-   // constructor(@InjectModel(Collection.name) private collectionModel: Model<Collection>,) {}
+  // constructor(@InjectModel(Collection.name) private collectionModel: Model<Collection>,) {}
 
-    async addAuction(addAuctionDto: AddAuctionDto):Promise<any>
-    {
-        return "string";
-    }
+  async addAuction(addAuctionDto: AddAuctionDto): Promise<any> {
+    return 'string';
+  }
 }

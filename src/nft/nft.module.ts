@@ -8,6 +8,6 @@ import { NFTSchema } from './schemas/nft.schema';
 @Module({
   imports: [MongooseModule.forFeature([{ name: NFT.name, schema: NFTSchema }])],
   controllers: [NftController],
-  providers: [NftService]
+  providers: [NftService],
 })
 export class NFTModule {}

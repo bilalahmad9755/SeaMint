@@ -10,7 +10,6 @@ enum AuctionStatus {
 }
 @Schema()
 export class Auction {
-  
   @Prop({ required: false })
   startTime: Date;
 
@@ -20,11 +19,11 @@ export class Auction {
   @Prop({ required: true })
   status: AuctionStatus;
 
-  @Prop({required: false})
-  price: string
+  @Prop({ required: false })
+  price: string;
 
-  @Prop({required: false})
-  bids: IBid[]
+  @Prop({ required: false })
+  bids: IBid[];
 }
 
 export const AuctionSchema = SchemaFactory.createForClass(Auction);

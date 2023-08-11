@@ -1,4 +1,13 @@
-import { Body, Controller, Post, HttpCode, HttpStatus, ValidationPipe, UsePipes, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  ValidationPipe,
+  UsePipes,
+  Res,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login';
 import { SignupDto } from './dto/signup';
@@ -23,7 +32,7 @@ export class AuthController {
   }
 
   @Post('signup/verify')
-  async signupVerify(signature : string){
-    console.log("signature for verification: ", signature);
+  async signupVerify(signature: string) {
+    console.log('signature for verification: ', signature);
   }
 }

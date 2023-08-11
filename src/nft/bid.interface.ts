@@ -1,4 +1,4 @@
-export interface IBid{
-    price: string;
-    buyerAddress: string;
+export interface IBid {
+  price: string;
+  buyerAddress: string;
 }

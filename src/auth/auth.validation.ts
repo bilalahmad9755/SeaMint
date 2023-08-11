@@ -1,5 +1,9 @@
-
-import { ArgumentMetadata, Injectable, PipeTransform, BadRequestException } from '@nestjs/common';
+import {
+  ArgumentMetadata,
+  Injectable,
+  PipeTransform,
+  BadRequestException,
+} from '@nestjs/common';
 import { isAddress } from 'web3-validator';
 import { SignupDto } from './dto/signup';
 import { AddUserDto } from 'src/user/dto/add-user';

@@ -7,7 +7,7 @@ export type NFTDocument = HydratedDocument<NFT>;
 export class NFT {
   @Prop({ required: true })
   id: string;
-  @Prop({ required: true , type: Auction})
-  auction: IAuction
+  @Prop({ required: true, type: Auction })
+  auction: IAuction;
 }
 export const NFTSchema = SchemaFactory.createForClass(NFT);

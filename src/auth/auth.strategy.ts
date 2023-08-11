@@ -4,7 +4,6 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthService } from './auth.service';
 import { jwtConstants } from './constants';
 
-
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
@@ -14,11 +13,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-//   async validate(payload: any) {
-//     const user = await this.authService.validateUser(payload);
-//     if (!user) {
-//       throw new UnauthorizedException();
-//     }
-//     return user;
-//   }
+  //   async validate(payload: any) {
+  //     const user = await this.authService.validateUser(payload);
+  //     if (!user) {
+  //       throw new UnauthorizedException();
+  //     }
+  //     return user;
+  //   }
 }

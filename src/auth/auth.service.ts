@@ -63,12 +63,13 @@ export class AuthService {
       console.log('Signed message: ', _signature);
 
       ///@notice verifying signed message...
-      const message = response.raw.message; 
+      const message = response.raw.message;
       const signature = _signature.signature;
-      const verified = await Moralis.Auth.verify({message: message, signature: signature});
-      console.log("web3 authentication: ", verified);
-
-
+      const verified = await Moralis.Auth.verify({
+        message: message,
+        signature: signature,
+      });
+      console.log('web3 authentication: ', verified);
 
       return response.raw.message;
     } catch (e) {

@@ -1,4 +1,13 @@
-import { Controller, Get, Post, HttpCode, Body, Param, Put, UseGuards} from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  HttpCode,
+  Body,
+  Param,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { Collection } from './schemas/collection.schema';
 import { CollectionService } from './collection.service';
@@ -23,14 +32,18 @@ export class CollectionController {
     return this.collectionService.addCollection(addCollectionDto);
   }
 
-  @Get(":name")
-  getCollectionByName(@Param('name') name: string): Promise<Collection[]> 
-  {
+  @Get(':name')
+  getCollectionByName(@Param('name') name: string): Promise<Collection[]> {
     return this.collectionService.getCollectionByName(name);
   }
-  @Put(":name")
-  updateCollectionByName(@Param('name') name: string, @Body() updateCollectionDto: UpdateCollectionDto): Promise<Collection>
-  {
-    return this.collectionService.updateCollectionByName(name, updateCollectionDto);
+  @Put(':name')
+  updateCollectionByName(
+    @Param('name') name: string,
+    @Body() updateCollectionDto: UpdateCollectionDto,
+  ): Promise<Collection> {
+    return this.collectionService.updateCollectionByName(
+      name,
+      updateCollectionDto,
+    );
   }
 }
