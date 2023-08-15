@@ -5,5 +5,8 @@ export class AddAuctionDto {
   id: string;
 
   @IsNotEmpty()
+  metadata: Record<string, any>
+
+  @IsNotEmpty()
   auction: IAuction;
 }

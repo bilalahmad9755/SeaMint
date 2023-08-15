@@ -4,17 +4,20 @@ import {
   Post,
   HttpCode,
   Body,
-  Param,
   Put,
   UseGuards,
+  Res,
+  Query,
+  UseFilters
 } from '@nestjs/common';
-import { Request } from 'express';
+import { Response } from 'express';
 import { Collection } from './schemas/collection.schema';
 import { CollectionService } from './collection.service';
 import { AddCollectionDto } from './dto/add-collection';
 import { UpdateCollectionDto } from './dto/update-collection';
 import { AuthGuard } from 'src/auth/auth.guard';
-
+import { AddAuctionDto } from 'src/nft/dto/add-auction';
+import { BaseExceptionFilter } from '@nestjs/core';
 @Controller('collection')
 export class CollectionController {
   constructor(private readonly collectionService: CollectionService) {}
@@ -31,19 +34,34 @@ export class CollectionController {
   ): Promise<Collection> {
     return this.collectionService.addCollection(addCollectionDto);
   }
-
-  @Get(':name')
-  getCollectionByName(@Param('name') name: string): Promise<Collection[]> {
+  // need to change @Param with @Query...
+  @Get()
+  getCollectionByName(@Query('name') name: string): Promise<Collection[]> {
     return this.collectionService.getCollectionByName(name);
   }
-  @Put(':name')
+  @Put()
   updateCollectionByName(
-    @Param('name') name: string,
+    @Query('name') name: string,
     @Body() updateCollectionDto: UpdateCollectionDto,
   ): Promise<Collection> {
     return this.collectionService.updateCollectionByName(
       name,
       updateCollectionDto,
     );
+  }
+
+  @Post('addNFT')
+  /**
+   * adding NFT to existing collection... 
+   * auction is must for each NFT added in collection...
+   * searching collection based on "Name" & "owner"...
+  */
+  async addNft(
+    @Body() addNftDto: AddAuctionDto,
+    @Query('name') name: string,
+    @Query('owner') owner:string,
+    @Res() rspns: Response)
+  {
+    await this.collectionService.addNft(name, owner, addNftDto);
   }
 }

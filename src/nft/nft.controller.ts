@@ -10,7 +10,9 @@ export class NftController {
   // get-Nft data
 
   @Post('auction')
+  // add auction in existing collection...
   async addAuction(@Body() addAuctionDto: AddAuctionDto): Promise<any> {
     return await this.nftService.addAuction(addAuctionDto);
   }
+  
 }
