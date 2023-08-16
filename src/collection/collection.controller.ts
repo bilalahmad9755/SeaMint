@@ -8,7 +8,7 @@ import {
   UseGuards,
   Res,
   Query,
-  UseFilters
+  UsePipes,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Collection } from './schemas/collection.schema';
@@ -17,7 +17,7 @@ import { AddCollectionDto } from './dto/add-collection';
 import { UpdateCollectionDto } from './dto/update-collection';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AddAuctionDto } from 'src/nft/dto/add-auction';
-import { BaseExceptionFilter } from '@nestjs/core';
+import { CollectionExistsPipe } from './collection.validation';
 @Controller('collection')
 export class CollectionController {
   constructor(private readonly collectionService: CollectionService) {}
@@ -50,12 +50,15 @@ export class CollectionController {
     );
   }
 
-  @Post('addNFT')
+  
   /**
    * adding NFT to existing collection... 
    * auction is must for each NFT added in collection...
    * searching collection based on "Name" & "owner"...
+   * validating duplication of NFTs based on owner/Id
   */
+  @Post('addNFT')
+  @UsePipes(CollectionExistsPipe)
   async addNft(
     @Body() addNftDto: AddAuctionDto,
     @Query('name') name: string,
@@ -63,5 +66,6 @@ export class CollectionController {
     @Res() rspns: Response)
   {
     await this.collectionService.addNft(name, owner, addNftDto);
+    return rspns.status(201).json({message: "NFT added..."});
   }
 }

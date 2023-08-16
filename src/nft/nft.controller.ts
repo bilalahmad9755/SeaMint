@@ -1,7 +1,6 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { NftService } from './nft.service';
-import { AddAuctionDto } from './dto/add-auction';
-import { NFT } from './schemas/nft.schema';
+import { OfferBidDto } from './dto/offer-bid';
 @Controller('nft')
 export class NftController {
   constructor(private readonly nftService: NftService) {}
@@ -9,10 +8,12 @@ export class NftController {
   // get-biding list of NFT
   // get-Nft data
 
-  @Post('auction')
-  // add auction in existing collection...
-  async addAuction(@Body() addAuctionDto: AddAuctionDto): Promise<any> {
-    return await this.nftService.addAuction(addAuctionDto);
+  @Post('offerBid')
+  async offerBid(@Body() offerBidDto: OfferBidDto,
+  @Query('name') name: string,
+  @Query('nftId') nftId: string,
+  @Query('owner') owner: string)
+  {
+    await this.nftService.addUserBid(name, owner, nftId,  offerBidDto);
   }
-  
 }
