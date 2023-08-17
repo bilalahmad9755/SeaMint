@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { IBid } from '../bid.interface';
-import { Bid } from './bid.schema';
 export type AuctionDocument = HydratedDocument<Auction>;
 
 enum AuctionStatus {
@@ -23,7 +22,7 @@ export class Auction {
   price: string;
 
   @Prop({ required: false })
-  bids: IBid[];
+  bid: IBid[];
 }
 
 export const AuctionSchema = SchemaFactory.createForClass(Auction);

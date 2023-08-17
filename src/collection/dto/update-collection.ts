@@ -1,18 +1,17 @@
-export class UpdateCollectionDto
-{
-    name: string;
+export class UpdateCollectionDto {
+  name: string;
 
-    owner: string;
+  owner: string;
 
-    items: string;
+  items: string;
 
-    date: string;
+  date: string;
 
-    worth: string;
+  worth: string;
 
-    chain: string;
+  chain: string;
 
-    category: string;
+  category: string;
 
-    description: string;
+  description: string;
 }

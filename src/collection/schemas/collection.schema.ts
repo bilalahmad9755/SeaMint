@@ -10,7 +10,7 @@ export class Collection {
 
   @Prop({ required: true })
   owner: string;
-  
+
   @Prop({ required: true })
   items: number;
 
@@ -26,9 +26,9 @@ export class Collection {
   @Prop({ required: true })
   category: string;
 
-  @Prop({required: true})
-  nft: NFT[]
-  
+  @Prop({ required: true })
+  nft: NFT[];
+
   @Prop({ required: true })
   description: string;
 }

@@ -50,22 +50,20 @@ export class CollectionController {
     );
   }
 
-  
   /**
-   * adding NFT to existing collection... 
+   * adding NFT to existing collection...
    * auction is must for each NFT added in collection...
    * searching collection based on "Name" & "owner"...
-   * validating duplication of NFTs based on owner/Id
-  */
+   * validating duplication of NFTs based on owner/Id...
+   */
   @Post('addNFT')
-  @UsePipes(CollectionExistsPipe)
   async addNft(
     @Body() addNftDto: AddAuctionDto,
     @Query('name') name: string,
-    @Query('owner') owner:string,
-    @Res() rspns: Response)
-  {
+    @Query('owner') owner: string,
+    @Res() rspns: Response,
+  ) {
     await this.collectionService.addNft(name, owner, addNftDto);
-    return rspns.status(201).json({message: "NFT added..."});
+    return rspns.status(201).json({ message: 'NFT added...' });
   }
 }

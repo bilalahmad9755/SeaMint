@@ -7,8 +7,10 @@ import { NFTSchema } from './schemas/nft.schema';
 import { CollectionModule } from 'src/collection/collection.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: NFT.name, schema: NFTSchema }]),
-  CollectionModule],
+  imports: [
+    MongooseModule.forFeature([{ name: NFT.name, schema: NFTSchema }]),
+    CollectionModule,
+  ],
   controllers: [NftController],
   providers: [NftService],
 })

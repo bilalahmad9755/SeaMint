@@ -6,13 +6,10 @@ import {
   HttpStatus,
   ValidationPipe,
   UsePipes,
-  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login';
-import { SignupDto } from './dto/signup';
 import { EthereumAddressValidationPipe } from './auth.validation';
-import { response } from 'express';
 import { AddUserDto } from 'src/user/dto/add-user';
 @Controller('auth')
 export class AuthController {

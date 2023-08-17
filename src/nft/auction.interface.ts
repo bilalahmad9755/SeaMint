@@ -4,5 +4,5 @@ export interface IAuction {
   endTime: string;
   status: string;
   price: string;
-  bids: IBid[];
+  bid: IBid[];
 }

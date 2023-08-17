@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
 import { NftService } from './nft.service';
 import { OfferBidDto } from './dto/offer-bid';
+import { Response } from 'express';
 @Controller('nft')
 export class NftController {
   constructor(private readonly nftService: NftService) {}
@@ -9,11 +10,23 @@ export class NftController {
   // get-Nft data
 
   @Post('offerBid')
-  async offerBid(@Body() offerBidDto: OfferBidDto,
-  @Query('name') name: string,
-  @Query('nftId') nftId: string,
-  @Query('owner') owner: string)
-  {
-    await this.nftService.addUserBid(name, owner, nftId,  offerBidDto);
+  async offerBid(
+    @Body() offerBidDto: OfferBidDto,
+    @Query('name') name: string,
+    @Query('nftId') nftId: string,
+    @Query('owner') owner: string,
+    @Res() rspns: Response,
+  ) {
+    await this.nftService.addUserBid(name, owner, nftId, offerBidDto);
+    return rspns.status(201).json({ message: 'bid offered!' });
+  }
+
+  @Get('bids')
+  async getBids(
+    @Query('name') name: string,
+    @Query('owner') owner: string,
+    @Query('nftId') nftId: string,
+  ) {
+    return await this.nftService.getBids(name, owner, nftId);
   }
 }

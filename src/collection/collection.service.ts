@@ -12,6 +12,7 @@ import { UpdateCollectionDto } from './dto/update-collection';
 import { AddAuctionDto } from 'src/nft/dto/add-auction';
 import { NFT } from 'src/nft/schemas/nft.schema';
 import { OfferBidDto } from 'src/nft/dto/offer-bid';
+import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 
 @Injectable()
 export class CollectionService {
@@ -32,33 +33,45 @@ export class CollectionService {
     return this.collectionModel.find({ name }).exec();
   }
 
-  async getSpecificCollection(name: string, owner: string): Promise<Collection>
-  {
-    return await this.collectionModel.findOne({name, owner}).exec();
+  async getSpecificCollection(name: string, owner: string): Promise<any> {
+    const collection = await this.collectionModel.findOne({ name, owner }).exec();
+    if (collection === null || collection === undefined) {
+      throw new HttpException('collection not Exists...', 500);
+    } else {
+      return collection;
+    }
   }
 
-  async getSpecificNFT(collection: Collection, nftId: string): Promise<NFT>
-  {
-    return collection.nft.find(obj => {obj.id === nftId});
+  async getSpecificNFT(collection: any, nftId: string): Promise<any> {
+    console.log(collection);
+    const nft = await collection.find({nftId}).exec();
+    console.log("nft found: ", nft);
+    if (nft === undefined || nft === null) {
+      throw new HttpException('NFT not exists', 500);
+    }
+    else
+    {
+      return nft;
+    }
   }
 
-  async offerBid(name:string, owner:string, nftId:string, bid: OfferBidDto):Promise<Boolean>
-  {
-    const collection = await this.collectionModel.findOne({name, owner}).exec();
-    if(collection == null)
-    {
-      throw new HttpException("collection not found", 404);
-    }
-    try{
-      collection.nft.find(obj=>{obj.id === nftId}).auction.bids.push(bid);
-    }
-    catch(error)
-    {
-      throw new HttpException(error.resposne, 500);
-    }
-    collection.save();
-    return true;
-  }
+  // async offerBid(name:string, owner:string, nftId:string, bid: OfferBidDto):Promise<Boolean>
+  // {
+  //   const collection = await this.getSpecificCollection(name, owner);
+  //   if(collection == null)
+  //   {
+  //     throw new HttpException("collection not found", 404);
+  //   }
+  //   try{
+  //     collection.nft.find(obj=>{obj.id === nftId}).auction.bids.push(bid);
+  //   }
+  //   catch(error)
+  //   {
+  //     throw new HttpException("NFT not found...", 404);
+  //   }
+  //   collection.save();
+  //   return true;
+  // }
 
   async updateCollectionByName(
     name: string,
