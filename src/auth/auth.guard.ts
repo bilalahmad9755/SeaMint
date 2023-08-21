@@ -24,6 +24,7 @@ export class AuthGuard implements CanActivate {
       });
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
+      console.log("payload after JWT verification: ", payload);
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException();

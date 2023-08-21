@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { IBid } from '../bid.interface';
+import { defaultIfEmpty } from 'rxjs';
 export type AuctionDocument = HydratedDocument<Auction>;
 
 enum AuctionStatus {
@@ -9,8 +10,7 @@ enum AuctionStatus {
 }
 @Schema()
 export class Auction {
-  @Prop({ required: false })
-  startTime: Date;
+  startTime: {required: true, type: string, defaultIfEmpty: "Date"};
 
   @Prop({ required: false })
   endTime: Date;
@@ -23,6 +23,10 @@ export class Auction {
 
   @Prop({ required: false })
   bid: IBid[];
-}
 
+  // setDefaultStartTime(){
+  //   this.startTime = new Date;
+  //   console.log("time set: ", this.startTime);
+  // }
+}
 export const AuctionSchema = SchemaFactory.createForClass(Auction);

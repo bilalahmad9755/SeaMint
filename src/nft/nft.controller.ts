@@ -20,13 +20,4 @@ export class NftController {
     await this.nftService.addUserBid(name, owner, nftId, offerBidDto);
     return rspns.status(201).json({ message: 'bid offered!' });
   }
-
-  @Get('bids')
-  async getBids(
-    @Query('name') name: string,
-    @Query('owner') owner: string,
-    @Query('nftId') nftId: string,
-  ) {
-    return await this.nftService.getBids(name, owner, nftId);
-  }
 }

@@ -73,10 +73,19 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 Nest is [MIT licensed](LICENSE).
 
 
-## Setup MongoDB
+## cmd MongoDB
 
 - starting database - sudo systemctl start mongod
 - status check - sudo systemctl status mongod
 - open mongo terminal - mongosh
 - check current database - db
 - create new database - use dbName
+
+
+## cmd Docker
+- building image - sudo docker compose build
+- running containers - sudo docker compose up
+- stopping comtainers - sudo docker compose down
+- check docker images - sudo docker images
+- check running instances - sudo docker ps
+- check docker daemon status - systemclt status docker
