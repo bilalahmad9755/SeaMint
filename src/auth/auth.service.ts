@@ -22,6 +22,7 @@ export class AuthService {
       password: user[0].password,
     };
     console.log('payload: ', payload);
+    // expiry of jwt is not defined here...
     return {
       access_token: await this.jwtService.signAsync(payload, {
         secret: jwtConstants.secret,

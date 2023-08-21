@@ -17,7 +17,6 @@ import { AddCollectionDto } from './dto/add-collection';
 import { UpdateCollectionDto } from './dto/update-collection';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AddAuctionDto } from 'src/nft/dto/add-auction';
-import { CollectionExistsPipe } from './collection.validation';
 @Controller('collection')
 export class CollectionController {
   constructor(private readonly collectionService: CollectionService) {}
