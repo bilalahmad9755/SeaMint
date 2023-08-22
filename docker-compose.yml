@@ -13,10 +13,6 @@ services:
     image: mongo:latest
     restart: always
     container_name: seamint-db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: seamint
-      MONGO_INITDB_ROOT_PASSWORD: seamint
-      MONGO_INITDB_DATABASE: seamint
     ports:
       - '27017:27017'
     volumes:

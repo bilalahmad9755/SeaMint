@@ -12,6 +12,5 @@ COPY . .
 RUN npm run build
 
 EXPOSE 3000
-EXPOSE 27017
 
 CMD [ "npm", "run", "start:dev" ]
