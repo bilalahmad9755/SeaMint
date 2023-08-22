@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
@@ -32,9 +36,13 @@ export class AuthService {
   }
 
   async signUp(addUserDto: AddUserDto): Promise<any> {
-    return await this.userService.addUser(addUserDto);
+    try {
+      await this.userService.addUser(addUserDto);
+    } catch (error) {
+      throw new HttpException('internal server error', 500);
+    }
+    return { message: 'signup successfull' };
   }
-
   async requestMoralis(address: string, chain: string): Promise<any> {
     try {
       await Moralis.start({

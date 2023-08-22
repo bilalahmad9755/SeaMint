@@ -10,7 +10,7 @@ import {
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login';
 import { EthereumAddressValidationPipe } from './auth.validation';
-import { AddUserDto } from 'src/user/dto/add-user';
+import { AddUserDto } from '../user/dto/add-user';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
