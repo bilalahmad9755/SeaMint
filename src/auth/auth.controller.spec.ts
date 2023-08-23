@@ -3,30 +3,65 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { AuthModule } from './auth.module';
-import { UserModule } from '../user/user.module';
-
+import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from '../user/schemas/user.schema';
+import { INestApplication, HttpStatus } from '@nestjs/common';
+import * as request from 'supertest';
+import { HttpStatusCode } from 'axios';
 
 describe('AuthController', () => {
-  let controller: AuthController;
-
+  let app: INestApplication;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [AuthService, UserService, JwtService],
-      imports: [AuthModule, UserModule]
+      imports: [
+        MongooseModule.forRoot('mongodb://localhost:27017/test-db'),
+        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+      ],
     }).compile();
-    
-    controller = module.get<AuthController>(AuthController);
+    app = module.createNestApplication();
+    await app.init();
   });
 
-  const signUpInput = {name: 'bilal', password: '12345', walletAddress: '0x516DcEb2b8905ad01084FB932ee7Cc7e0a8321Dd'}
-  it('should signup:', () => {
-    expect(controller.signUp(signUpInput)).toBe({message: "signup successfull"});
+  afterAll(async () => {
+    await app.close();
   });
 
-  // const loginInput = {username: 'bilal', password: '12345'};
-  // it('login', ()=>{
-  //   expect(controller.login(loginInput)).toBeDefined();
-  // })
+  it('should signup successfully:', async () => {
+    const signupDto = {
+      name: 'bilal',
+      password: '12345',
+      walletAddress: '0xc2E382BD2a62f49C95b14EEA766F2Ba14Ae1f98D',
+    };
+    const response = await request(app.getHttpServer())
+      .post('/auth/signup')
+      .send(signupDto)
+      .expect(HttpStatus.CREATED);
+    expect(response.body).toEqual([{ message: 'signin successful' }]);
+  });
+
+  it('should login successfully:', async () => {
+    const loginDto = { username: 'bilal', password: '12345' };
+    const response = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send(loginDto)
+      .expect(HttpStatus.OK);
+    expect(response.body).toEqual([{ message: 'login successful' }]);
+  });
+  it('should throw user duplication:', async () => {
+    const signupDto = {
+      name: 'bilal',
+      password: '12345',
+      walletAddress: '0xc2E382BD2a62f49C95b14EEA766F2Ba14Ae1f98D',
+    };
+    const response = await request(app.getHttpServer())
+      .post('/auth/signup')
+      .send(signupDto)
+      .expect(HttpStatus.INTERNAL_SERVER_ERROR);
+    expect(response.body).toEqual({
+      statusCode: 500,
+      message: 'user duplication',
+    });
+  });
 });

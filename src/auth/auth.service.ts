@@ -35,13 +35,10 @@ export class AuthService {
     // return "working fine...";
   }
 
-  async signUp(addUserDto: AddUserDto): Promise<any> {
-    try {
-      await this.userService.addUser(addUserDto);
-    } catch (error) {
-      throw new HttpException('internal server error', 500);
-    }
-    return { message: 'signup successfull' };
+  async signUp(addUserDto: AddUserDto)
+  {
+    await this.userService.addUser(addUserDto);
+    return;
   }
   async requestMoralis(address: string, chain: string): Promise<any> {
     try {
