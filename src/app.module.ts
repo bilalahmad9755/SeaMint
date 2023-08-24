@@ -18,7 +18,7 @@ import { NftController } from './nft/nft.controller';
 import { NftService } from './nft/nft.service';
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/seaMint'),
+    MongooseModule.forRoot('mongodb://seamint-db:27017/seaMint'),
     MongooseModule.forFeature([
       { name: Collection.name, schema: CollectionSchema },
     ]),

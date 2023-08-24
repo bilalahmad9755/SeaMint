@@ -21,10 +21,23 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @UsePipes(new ValidationPipe())
-  login(@Body() loginDto: LoginDto, @Res() res: Response) {
-    this.authService.signIn(loginDto.username, loginDto.password);
-    res.status(HttpStatus.OK).json([{message: "login successful"}]);
+  async login(@Body() loginDto: LoginDto, @Res() res: Response) {
+    console.log("login dto: ", loginDto);
+    const jwt = await this.authService.signIn(loginDto.username, loginDto.password);
+    console.log(jwt);
+    res.cookie('token', jwt, {httpOnly: true});
+    return res.status(HttpStatus.OK).send({message: "login successfull"});
   }
+
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  async logout(@Res() res: Response)
+  {
+    res.clearCookie('token');
+    return res.status(HttpStatus.OK).send({message: "logout successful"});
+  }
+
 
   @Post('signup')
   @UsePipes(new EthereumAddressValidationPipe())
