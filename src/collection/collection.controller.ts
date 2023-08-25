@@ -15,7 +15,7 @@ import { Collection } from './schemas/collection.schema';
 import { CollectionService } from './collection.service';
 import { AddCollectionDto } from './dto/add-collection';
 import { UpdateCollectionDto } from './dto/update-collection';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { JwtAuthGuard } from 'src/auth/auth.jwtGuard';
 import { AddAuctionDto } from 'src/nft/dto/add-auction';
 @Controller('collection')
 export class CollectionController {
@@ -27,7 +27,7 @@ export class CollectionController {
 
   @Post()
   @HttpCode(201)
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   addCollection(
     @Body() addCollectionDto: AddCollectionDto,
   ): Promise<Collection> {

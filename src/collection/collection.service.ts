@@ -2,13 +2,13 @@ import { Model } from 'mongoose';
 import {
   Injectable,
   HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Collection } from './schemas/collection.schema';
 import { AddCollectionDto } from './dto/add-collection';
 import { UpdateCollectionDto } from './dto/update-collection';
 import { AddAuctionDto } from 'src/nft/dto/add-auction';
-import { Auction } from 'src/nft/schemas/auction.schema';
 
 @Injectable()
 export class CollectionService {
@@ -17,6 +17,12 @@ export class CollectionService {
   ) {}
 
   async addCollection(addCollectionDto: AddCollectionDto): Promise<Collection> {
+    // same owner with same collection name should not exists twice...
+    const duplicateCollection = await this.collectionModel.findOne({walletAddress: addCollectionDto.walletAddress, owner: addCollectionDto.owner});
+    if(duplicateCollection !== null)
+    {
+      throw new HttpException("Same Collection Already Exists", HttpStatus.BAD_REQUEST);
+    }
     const addedCollection = new this.collectionModel(addCollectionDto);
     return addedCollection.save();
   }

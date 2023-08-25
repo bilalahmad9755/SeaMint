@@ -16,9 +16,12 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
   /**
-   * @note using global validation pipe will enable all validations on Schemas and Dtos... 
+   * @note using global validation pipe will enable all validations on Schemas and Dtos...
    */
-  app.useGlobalPipes(new ValidationPipe({whitelist: true}));
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  /**
+   * @note using cookie parser for authentication...
+   */
   app.use(cookieParser());
   await app.listen(3000);
 }

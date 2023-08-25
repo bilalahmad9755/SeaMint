@@ -12,6 +12,9 @@ export class AddCollectionDto {
   owner: string;
 
   @IsNotEmpty()
+  walletAddress: string;
+
+  @IsNotEmpty()
   items: string;
 
   @IsNotEmpty()

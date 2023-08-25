@@ -1,7 +1,6 @@
 import {
   HttpException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -9,30 +8,29 @@ import { jwtConstants } from './constants';
 import Moralis from 'moralis';
 import { Web3 } from 'web3';
 import { AddUserDto } from 'src/user/dto/add-user';
+import { User } from 'src/user/schemas/user.schema';
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
   ) {}
-  async signIn(username: string, pass: string): Promise<any> {
-    const user = await this.userService.getUserByName(username);
-    if (user[0].password !== pass) {
-      throw new UnauthorizedException();
+  async validateUser(walletAddress: string, pass: string): Promise<User> {
+    const user = await this.userService.validateUser(walletAddress, pass);
+    if (user === null) {
+      throw new HttpException("Account not Exists!", 404);
     }
-    // generating JWT after authentictaion...
-    const payload = {
-      username: user[0].name,
-      password: user[0].password,
-    };
-    console.log('payload: ', payload);
-    // expiry of jwt is not defined here...
-    return {
-      access_token: await this.jwtService.signAsync(payload, {
+    else
+    {
+      return user;
+    }
+  }
+
+  async generateToken(payload: Object):Promise<string>
+  {
+    return await this.jwtService.signAsync(payload, {
         secret: jwtConstants.secret,
-      }),
-    };
-    // return "working fine...";
+      });
   }
 
   async signUp(addUserDto: AddUserDto)
