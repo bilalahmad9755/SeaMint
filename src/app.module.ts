@@ -16,12 +16,15 @@ import { JwtService } from '@nestjs/jwt';
 import { NFTModule } from './nft/nft.module';
 import { NftController } from './nft/nft.controller';
 import { NftService } from './nft/nft.service';
+import { ConfigModule } from '@nestjs/config';
+
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://seamint-db:27017/seaMint'),
     MongooseModule.forFeature([
       { name: Collection.name, schema: CollectionSchema },
     ]),
+    ConfigModule.forRoot(),
     AuthModule,
     UserModule,
     NFTModule,

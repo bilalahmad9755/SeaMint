@@ -15,8 +15,8 @@ import { Collection } from './schemas/collection.schema';
 import { CollectionService } from './collection.service';
 import { AddCollectionDto } from './dto/add-collection';
 import { UpdateCollectionDto } from './dto/update-collection';
-import { JwtAuthGuard } from 'src/auth/auth.jwtGuard';
-import { AddAuctionDto } from 'src/nft/dto/add-auction';
+import { AuthGuard } from '@nestjs/passport';
+import { AddAuctionDto } from '../nft/dto/add-auction';
 @Controller('collection')
 export class CollectionController {
   constructor(private readonly collectionService: CollectionService) {}
@@ -27,7 +27,7 @@ export class CollectionController {
 
   @Post()
   @HttpCode(201)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard('jwt-cookie'))
   addCollection(
     @Body() addCollectionDto: AddCollectionDto,
   ): Promise<Collection> {

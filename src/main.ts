@@ -23,6 +23,12 @@ async function bootstrap() {
    * @note using cookie parser for authentication...
    */
   app.use(cookieParser());
+
+  /**
+   * @note default url to swagger API
+   */
+
+  app.setGlobalPrefix("api");
   await app.listen(3000);
 }
 bootstrap();

@@ -1,6 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
 import { User } from 'src/user/schemas/user.schema';
 import { BasicStrategy } from 'passport-http';
 
@@ -17,7 +17,7 @@ export class BasicAuthStrategy extends PassportStrategy(BasicStrategy) {
       console.log('exeception from strategy...');
       throw new UnauthorizedException();
     }
-    console.log("user: ", user)
+    console.log("user: ", user);
     return user;
   }
 }
