@@ -89,3 +89,4 @@ Nest is [MIT licensed](LICENSE).
 - check docker images - sudo docker images
 - check running instances - sudo docker ps
 - check docker daemon status - systemclt status docker
+- running testcases in docker - sudo docker compose run -it nestjs-app npm test

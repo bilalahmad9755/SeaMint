@@ -12,6 +12,9 @@ export class Collection {
   owner: string;
 
   @Prop({ required: true })
+  walletAddress: string;
+
+  @Prop({ required: true })
   items: number;
 
   @Prop({ required: true })

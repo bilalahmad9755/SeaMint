@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,7 +15,20 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+  /**
+   * @note using global validation pipe will enable all validations on Schemas and Dtos...
+   */
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  /**
+   * @note using cookie parser for authentication...
+   */
+  app.use(cookieParser());
 
+  /**
+   * @note default url to swagger API
+   */
+
+  app.setGlobalPrefix("api");
   await app.listen(3000);
 }
 bootstrap();

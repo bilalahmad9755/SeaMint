@@ -3,7 +3,7 @@ import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { AddUserDto } from './dto/add-user';
-import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
+import { stringify } from 'querystring';
 
 // This should be a real class/interface representing a user entity
 
@@ -28,11 +28,17 @@ export class UserService {
       throw new HttpException('user duplication', 500);
     }
     const addUser = new this.userModel(addUserDto);
-    addUser.save();
+    const saved = await addUser.save();
+    console.log("data saved: ", saved);
     return;
   }
 
   async getUserByName(name: string): Promise<User[]> {
     return this.userModel.find({ name }).exec();
+  }
+
+  async validateUser(walletAddress: string, password: string): Promise<User>
+  {
+    return await this.userModel.findOne({walletAddress, password});
   }
 }

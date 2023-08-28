@@ -1,50 +1,39 @@
-import {
-  HttpException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 import Moralis from 'moralis';
 import { Web3 } from 'web3';
 import { AddUserDto } from 'src/user/dto/add-user';
+import { User } from 'src/user/schemas/user.schema';
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
   ) {}
-  async signIn(username: string, pass: string): Promise<any> {
-    const user = await this.userService.getUserByName(username);
-    if (user[0].password !== pass) {
-      throw new UnauthorizedException();
+  async validateUser(walletAddress: string, pass: string): Promise<User> {
+    const user = await this.userService.validateUser(walletAddress, pass);
+    if (user === null) {
+      throw new HttpException('Account not Exists!', 404);
+    } else {
+      return user;
     }
-    // generating JWT after authentictaion...
-    const payload = {
-      username: user[0].name,
-      password: user[0].password,
-    };
-    console.log('payload: ', payload);
-    // expiry of jwt is not defined here...
-    return {
-      access_token: await this.jwtService.signAsync(payload, {
-        secret: jwtConstants.secret,
-      }),
-    };
-    // return "working fine...";
   }
 
-  async signUp(addUserDto: AddUserDto)
-  {
+  async generateToken(payload: Object): Promise<string> {
+    return await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_SECRET_KEY,
+    });
+  }
+
+  async signUp(addUserDto: AddUserDto) {
     await this.userService.addUser(addUserDto);
     return;
   }
   async requestMoralis(address: string, chain: string): Promise<any> {
     try {
       await Moralis.start({
-        apiKey:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImMyMGY0OTNlLWVjMmItNDY5Yi1hMzk4LWU1YTJlNWY5OTg1NiIsIm9yZ0lkIjoiMjkzODczIiwidXNlcklkIjoiMzAwNzM0IiwidHlwZUlkIjoiZWMwMTNkNzItMTc0My00MTFkLWEwYzgtZWFiODAxMDEzY2MxIiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE2ODk4MDUwMTYsImV4cCI6NDg0NTU2NTAxNn0.LklkEaYzruMQXhfjKXM-Zsn6DAM5uMnlQXLEUpt5qUQ',
+        apiKey: process.env.MORALIS_API_KEY,
       });
       console.log('moralis started...');
       const response = await Moralis.Auth.requestMessage({
@@ -59,11 +48,9 @@ export class AuthService {
       console.log('Message to Sign: ', response.raw.message);
 
       ///@notice signing message...
-      const web3 = new Web3(
-        'https://eth-mainnet.g.alchemy.com/v2/FS666-4zcjeIZyzlP8JRt11rEmhAVzw2',
-      );
+      const web3 = new Web3(process.env.ETHEREUM_MAINNET_RPC);
       const account = web3.eth.accounts.privateKeyToAccount(
-        '0xa8e153632fc23f66efaf648e91b34c123efeaeb755c3530e71d20f134b8ae1dd',
+        process.env.WALLET_PRIVATE_KEY,
       );
       const _signature = account.sign(response.raw.message); // Empty string as the password
       console.log('Signed message: ', _signature);
