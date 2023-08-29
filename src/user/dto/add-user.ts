@@ -1,13 +1,20 @@
-import { IsNotEmpty} from 'class-validator';
+import { IsNotEmpty, IsStrongPassword, IsEmail, IsEthereumAddress, IsString} from 'class-validator';
 
 export class AddUserDto
 {
-    @IsNotEmpty()
+    //optional
+    @IsString()
     name: string;
 
     @IsNotEmpty()
+    @IsStrongPassword()
     password: string;
 
-    @IsNotEmpty()
+    // add later before doing any transaction
+    @IsEthereumAddress()
     walletAddress: string;
+
+    @IsEmail()
+    @IsNotEmpty()
+    email: string;
 }

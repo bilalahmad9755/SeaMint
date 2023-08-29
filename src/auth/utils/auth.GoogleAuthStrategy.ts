@@ -5,8 +5,7 @@ import { AuthService } from '../auth.service';
 
 @Injectable()
 export class GoogleAuthStrategy extends PassportStrategy(Strategy) {
-  constructor() // @Inject('AUTH_SERVICE') private readonly authService: AuthService,
-  {
+  constructor(@Inject(AuthService) private readonly authService: AuthService) {
     console.log('google strategy executing...');
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
@@ -16,17 +15,12 @@ export class GoogleAuthStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  /**
+   * Executes after login with verified token and info by Google API...
+   */
+
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
-    console.log(accessToken);
-    console.log(refreshToken);
-    console.log(profile);
-    // const user = await this.authService.validateUser({
-    //   email: profile.emails[0].value,
-    //   displayName: profile.displayName,
-    // });
-    // console.log('Validate');
-    // console.log(user);
-    // return user || null;
+    await this.authService.validateOAuthUser(profile.emails[0].value);
     return null;
   }
 }

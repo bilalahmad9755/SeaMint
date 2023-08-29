@@ -20,25 +20,36 @@ export class UserService {
 
   async addUser(addUserDto: AddUserDto) {
     // check for duplicated ethereum address...
-    const walletAddress = await this.userModel.findOne({
-      walletAddress: addUserDto.walletAddress,
-    }).exec();
-    console.log("duplicated record: ", walletAddress);
-    if (walletAddress !== null) {
+    const email = await this.userModel
+      .findOne({
+        email: addUserDto.email,
+      })
+      .exec();
+    console.log('duplicated user: ', email);
+    if (email !== null) {
       throw new HttpException('user duplication', 500);
     }
     const addUser = new this.userModel(addUserDto);
     const saved = await addUser.save();
-    console.log("data saved: ", saved);
+    console.log('data saved: ', saved);
     return;
   }
 
-  async getUserByName(name: string): Promise<User[]> {
-    return this.userModel.find({ name }).exec();
+  async addOAuthUser(email: string)
+  {
+    const newUser = new this.userModel({email: email})
+    newUser.save();
+  }
+  async validateUser(email: string, password: string): Promise<User> {
+    return await this.userModel.findOne({ email, password });
   }
 
-  async validateUser(walletAddress: string, password: string): Promise<User>
-  {
-    return await this.userModel.findOne({walletAddress, password});
+  async getUniqueUser(email: string): Promise<User> {
+    try {
+      console.log("query working fine...");
+      return await this.userModel.findOne({ email }).exec();
+    } catch (error) {
+      return null;
+    }
   }
 }

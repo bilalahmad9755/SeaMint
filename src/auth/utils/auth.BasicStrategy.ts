@@ -11,13 +11,17 @@ export class BasicAuthStrategy extends PassportStrategy(BasicStrategy) {
   }
 
   // username is EtereumWallet address uniquely idenftifying the user...
-  async validate(username: string, password: string): Promise<User> {
-    const user = await this.authService.validateUser(username, password);
+  /**
+   * executes after authnetication and returns the USER-object in Request body which is further used in controller...
+   * this function implements validation logic with services and databases...
+   * returned object will be populated in controller request
+   */
+  async validate(email: string, password: string): Promise<any> {
+    const user = await this.authService.validateUser(email, password);
     if (!user) {
       console.log('exeception from strategy...');
       throw new UnauthorizedException();
     }
-    console.log("user: ", user);
-    return user;
+    return {username: user.email};
   }
 }

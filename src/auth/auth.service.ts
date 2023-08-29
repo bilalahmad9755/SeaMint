@@ -11,8 +11,20 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
   ) {}
-  async validateUser(walletAddress: string, pass: string): Promise<User> {
-    const user = await this.userService.validateUser(walletAddress, pass);
+
+  async userExists(email: string): Promise<boolean> {
+    console.log("executing user exists...");
+    const user = await this.userService.getUniqueUser(email);
+    console.log("user exists: ", user);
+    if(user === null)
+    {
+      throw new HttpException("Invalid User for login!", 404);
+    }
+    return true;
+  }
+  // validating using password...
+  async validateUser(email: string, pass: string): Promise<User> {
+    const user = await this.userService.validateUser(email, pass);
     if (user === null) {
       throw new HttpException('Account not Exists!', 404);
     } else {
@@ -20,6 +32,15 @@ export class AuthService {
     }
   }
 
+  async validateOAuthUser(email: string)
+  {
+    const user = await this.userService.getUniqueUser(email);
+    if(user === null)
+    {
+      await this.userService.addOAuthUser(email);
+    }
+    return null;
+  }
   async generateToken(payload: Object): Promise<string> {
     return await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_SECRET_KEY,
