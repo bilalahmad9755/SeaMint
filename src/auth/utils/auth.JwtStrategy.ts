@@ -1,9 +1,11 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { Request } from 'express';
+import { AuthService } from '../auth.service';
+import { Inject } from '@nestjs/common';
 
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt-cookie') {
-  constructor() {
+  constructor(@Inject(AuthService) private readonly authService: AuthService) {
     console.log('JWT strategy contructor executing...');
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
