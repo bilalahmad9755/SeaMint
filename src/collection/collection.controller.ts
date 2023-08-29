@@ -8,7 +8,7 @@ import {
   UseGuards,
   Res,
   Query,
-  Req,
+  UsePipes,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Collection } from './schemas/collection.schema';
@@ -29,9 +29,8 @@ export class CollectionController {
   @HttpCode(201)
   @UseGuards(AuthGuard('jwt-cookie'))
   addCollection(
-    @Body() addCollectionDto: AddCollectionDto
+    @Body() addCollectionDto: AddCollectionDto,
   ): Promise<Collection> {
-    console.log('request in AddCollection controller: ');
     return this.collectionService.addCollection(addCollectionDto);
   }
   // need to change @Param with @Query...

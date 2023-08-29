@@ -10,7 +10,7 @@ import { PassportModule } from '@nestjs/passport';
 
 @Module({
   controllers: [AuthController],
-  providers: [ AuthService, BasicAuthStrategy, JwtAuthStrategy, GoogleAuthStrategy],
+  providers: [AuthService, BasicAuthStrategy, JwtAuthStrategy, GoogleAuthStrategy],
   imports: [
     UserModule,
     JwtModule.register({

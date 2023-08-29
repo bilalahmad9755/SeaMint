@@ -16,6 +16,7 @@ import { AuthService } from './auth.service';
 import { EthereumAddressValidationPipe } from './utils/auth.validation';
 import { AddUserDto } from '../user/dto/add-user';
 import { AuthGuard } from '@nestjs/passport';
+import { User } from '../user/schemas/user.schema';
 import { GoogleAuthGuard } from './utils/auth.GoogleAuthGuard';
 @Controller('auth')
 export class AuthController {
@@ -26,12 +27,12 @@ export class AuthController {
   @Post('login')
   @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard('basic'))
-  async handleLogin(@Req() req: { user: any }, @Res() res: Response) {
+  async handleLogin(@Req() req: { user: User }, @Res() res: Response) {
     console.log('user is added in request : ', req.user);
     const jwt = await this.authService.generateToken({
-      name: req.user.email
+      name: req.user.name,
+      walletAddress: req.user.walletAddress,
     });
-    console.log("jwt: ", jwt);
     res.cookie('token', jwt, { httpOnly: true });
     return res.status(HttpStatus.OK).send({ message: 'login successfull' });
   }
@@ -43,7 +44,7 @@ export class AuthController {
   }
 
   @Post('signup')
-  // @UsePipes(new EthereumAddressValidationPipe())// optional...
+  @UsePipes(new EthereumAddressValidationPipe())
   async handleSignUp(@Body() addUserDto: AddUserDto, @Res() res: Response) {
     await this.authService.signUp(addUserDto);
     res.status(HttpStatus.CREATED).json([{ message: 'signin successful' }]);
