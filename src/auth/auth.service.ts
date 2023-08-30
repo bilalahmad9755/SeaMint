@@ -5,6 +5,8 @@ import Moralis from 'moralis';
 import { Web3 } from 'web3';
 import { AddUserDto } from 'src/user/dto/add-user';
 import { User } from 'src/user/schemas/user.schema';
+import * as GeneratePassword from 'generate-password';
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
   constructor(
@@ -13,18 +15,17 @@ export class AuthService {
   ) {}
 
   async userExists(email: string): Promise<boolean> {
-    console.log("executing user exists...");
+    console.log('executing user exists...');
     const user = await this.userService.getUniqueUser(email);
-    console.log("user exists: ", user);
-    if(user === null)
-    {
-      throw new HttpException("Invalid User for login!", 404);
+    console.log('user exists: ', user);
+    if (user === null) {
+      throw new HttpException('Invalid User for login!', 404);
     }
     return true;
   }
   // validating using password...
   async validateUser(email: string, pass: string): Promise<User> {
-    const user = await this.userService.validateUser(email, pass);
+    const user = await this.userService.validateUser(email, await(this.hashPassword(pass)));
     if (user === null) {
       throw new HttpException('Account not Exists!', 404);
     } else {
@@ -32,14 +33,45 @@ export class AuthService {
     }
   }
 
-  async validateOAuthUser(email: string)
-  {
+  /**
+   * adding user with random password if not exists...
+   */
+  async validateOAuthUser(email: string) {
     const user = await this.userService.getUniqueUser(email);
-    if(user === null)
-    {
-      await this.userService.addOAuthUser(email);
+    if (user === null) {
+      await this.userService.addOAuthUser({
+        email: email,
+        password: await this.hashPassword(await this.generateRandomPassword()),
+        name: '',
+        walletAddress: '',
+      });
     }
     return null;
+  }
+  async hashPassword(password: string): Promise<string> {
+    const salt = await bcrypt.genSalt(
+      parseInt(process.env.PASSWORD_SALT_ROUND),
+    );
+    return await bcrypt.hash(password, salt);
+  }
+  async comparePassword(
+    plainPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
+    return await bcrypt.compare(plainPassword, hashedPassword);
+  }
+
+  async generateRandomPassword(): Promise<string> {
+    const passwordConfig: GeneratePassword.GenerateOptions = {
+      length: 12,
+      numbers: true,
+      symbols: true,
+      uppercase: true,
+      lowercase: true,
+      excludeSimilarCharacters: true,
+    };
+    // generate
+    return GeneratePassword.generate(passwordConfig);
   }
   async generateToken(payload: Object): Promise<string> {
     return await this.jwtService.signAsync(payload, {
@@ -48,7 +80,10 @@ export class AuthService {
   }
 
   async signUp(addUserDto: AddUserDto) {
-    await this.userService.addUser(addUserDto);
+    await this.userService.addUser({
+      ...addUserDto,
+      password: await this.hashPassword(addUserDto.password),
+    });
     return;
   }
   async requestMoralis(address: string, chain: string): Promise<any> {

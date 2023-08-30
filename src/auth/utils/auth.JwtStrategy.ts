@@ -14,7 +14,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt-cookie') {
         },
       ]),
       secretOrKey: process.env.JWT_SECRET_KEY,
-      ignoreExpiration: true,
+      ignoreExpiration: false,
     });
   }
 

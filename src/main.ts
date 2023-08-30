@@ -17,6 +17,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
   /**
    * @note using global validation pipe will enable all validations on Schemas and Dtos...
+   * setting whitelist means extra fields in DTO will be excluded...
    */
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   /**
@@ -29,6 +30,7 @@ async function bootstrap() {
    */
 
   app.setGlobalPrefix("api");
+
   await app.listen(3000);
 }
 bootstrap();

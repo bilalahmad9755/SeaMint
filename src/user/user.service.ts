@@ -3,7 +3,6 @@ import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { AddUserDto } from './dto/add-user';
-import { stringify } from 'querystring';
 
 // This should be a real class/interface representing a user entity
 
@@ -35,9 +34,9 @@ export class UserService {
     return;
   }
 
-  async addOAuthUser(email: string)
+  async addOAuthUser(userProfile: any)
   {
-    const newUser = new this.userModel({email: email})
+    const newUser = new this.userModel(userProfile);
     newUser.save();
   }
   async validateUser(email: string, password: string): Promise<User> {
