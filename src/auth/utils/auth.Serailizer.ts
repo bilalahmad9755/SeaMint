@@ -1,25 +1,29 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
-import { User } from 'src/user/schemas/user.schema';
 import { AuthService } from '../auth.service';
 
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
   constructor(
-    @Inject('AUTH_SERVICE') private readonly authService: AuthService,
+    @Inject(AuthService) private readonly authService: AuthService,
   ) {
     super();
   }
 
-  serializeUser(user: User, done: Function) {
-    console.log('Serializer User');
+  serializeUser(user: any, done: Function) {
+    console.log('Serializing User');
     done(null, user);
   }
-
+  /**
+   * 
+   * @param payload after google authentication
+   * @param done no error / user or no-user
+   * @returns 
+   */
   async deserializeUser(payload: any, done: Function) {
-    // const user = await this.authService.findUser(payload.id);
-    // console.log('Deserialize User');
-    // console.log(user);
-    // return user ? done(null, user) : done(null, null);
+    console.log("payload on deserializer: ", payload);
+    const user = await this.authService.userExists(payload.email);
+    console.log('Deserializing User: ', user);
+    return user ? done(null, user) : done(null, null);
   }
 }

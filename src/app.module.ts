@@ -17,6 +17,7 @@ import { NFTModule } from './nft/nft.module';
 import { NftController } from './nft/nft.controller';
 import { NftService } from './nft/nft.service';
 import { ConfigModule } from '@nestjs/config';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -28,6 +29,9 @@ import { ConfigModule } from '@nestjs/config';
     AuthModule,
     UserModule,
     NFTModule,
+    PassportModule.register({
+      session: true,
+    })
   ],
   controllers: [AppController, CollectionController, AuthController, NftController],
   providers: [AppService, CollectionService, AuthService, JwtService, NftService],

@@ -11,7 +11,7 @@ import {
   UseGuards,
   Get,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Response , Request} from 'express';
 import { AuthService } from './auth.service';
 import { EthereumAddressValidationPipe } from './utils/auth.validation';
 import { AddUserDto } from '../user/dto/add-user';
@@ -59,7 +59,15 @@ export class AuthController {
 
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
-  async handleGoogleRedirect() {
-    console.log('google redirect...');
+  async handleGoogleRedirect(@Req() req: Request) {
+    console.log("request user:", req.user);
+    console.log('google redirect executed...');
+  }
+
+  @Get('session/')
+  async handleSession(@Req() req: Request)
+  {
+    console.log("user request: ", req.user);
+    return {msg: "session handled..."}
   }
 }

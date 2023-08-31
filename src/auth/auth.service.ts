@@ -14,14 +14,14 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async userExists(email: string): Promise<boolean> {
+  async userExists(email: string): Promise<User> {
     console.log('executing user exists...');
     const user = await this.userService.getUniqueUser(email);
     console.log('user exists: ', user);
     if (user === null) {
       throw new HttpException('Invalid User for login!', 404);
     }
-    return true;
+    return user;
   }
   // validating using password...
   async validateUser(email: string, pass: string): Promise<User> {

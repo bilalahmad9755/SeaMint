@@ -7,10 +7,11 @@ import { BasicAuthStrategy } from './utils/auth.BasicStrategy';
 import { GoogleAuthStrategy } from './utils/auth.GoogleAuthStrategy';
 import { JwtAuthStrategy } from './utils/auth.JwtStrategy';
 import { PassportModule } from '@nestjs/passport';
+import { SessionSerializer } from './utils/auth.Serailizer';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, BasicAuthStrategy, JwtAuthStrategy, GoogleAuthStrategy],
+  providers: [AuthService, BasicAuthStrategy, JwtAuthStrategy, GoogleAuthStrategy, SessionSerializer],
   imports: [
     UserModule,
     JwtModule.register({
