@@ -1,65 +1,55 @@
-import {
-  Body,
-  Controller,
-  Post,
-  HttpCode,
-  HttpStatus,
-  ValidationPipe,
-  UsePipes,
-  Res,
-  Req,
-  UseGuards,
-  Get,
-} from '@nestjs/common';
-import { Response } from 'express';
-import { AuthService } from './auth.service';
-import { EthereumAddressValidationPipe } from './utils/auth.validation';
-import { AddUserDto } from '../user/dto/add-user';
-import { AuthGuard } from '@nestjs/passport';
-import { User } from '../user/schemas/user.schema';
+import { Controller, Req, UseGuards, Get, Session } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { GoogleAuthGuard } from './utils/auth.GoogleAuthGuard';
+import { AuthGuard } from './utils/auth.AuthGuard';
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
-
-  // local Auth Stretegy for login credentials...
-  @HttpCode(HttpStatus.OK)
-  @Post('login')
-  @UsePipes(new ValidationPipe())
-  @UseGuards(AuthGuard('basic'))
-  async handleLogin(@Req() req: { user: User }, @Res() res: Response) {
-    console.log('user is added in request : ', req.user);
-    const jwt = await this.authService.generateToken({
-      name: req.user.name,
-      walletAddress: req.user.walletAddress,
-    });
-    res.cookie('token', jwt, { httpOnly: true });
-    return res.status(HttpStatus.OK).send({ message: 'login successfull' });
-  }
-  @Post('logout')
-  @HttpCode(HttpStatus.OK)
-  async handleLogout(@Res() res: Response) {
-    res.clearCookie('token');
-    return res.status(HttpStatus.OK).send({ message: 'logout successful' });
-  }
-
-  @Post('signup')
-  @UsePipes(new EthereumAddressValidationPipe())
-  async handleSignUp(@Body() addUserDto: AddUserDto, @Res() res: Response) {
-    await this.authService.signUp(addUserDto);
-    res.status(HttpStatus.CREATED).json([{ message: 'signin successful' }]);
-  }
+  constructor() {}
 
   @Get('google/login')
   @UseGuards(GoogleAuthGuard)
   async handleGoogleLogin() {
     console.log('google login...');
-    return {message: "google login..."}
+    return { message: 'google login...' };
   }
 
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
-  async handleGoogleRedirect() {
-    console.log('google redirect...');
+  async handleGoogleRedirect(
+    @Req() req: Request,
+    @Session() session: Record<string, any>,
+  ) {
+    console.log('session in redirect: ', session);
+    console.log('session in redirect: ', req['sessionID']);
+    // return session to client for next frequent calls...
+    session.authenticated = true;
+    return { msg: 'OAuth login successfull...' };
+  }
+
+  @Get('session/')
+  @UseGuards(AuthGuard)
+  async handleSession(
+    @Req() request: Request,
+    @Session() session: Record<string, any>,
+  ) {
+    console.log('session object: ', session);
+    console.log('sessionID: ', session.id);
+    console.log('checking user: ', request['user']);
+    if (request['user']) {
+      return { msg: 'Authenticated...' };
+    } else {
+      return { msg: 'Not Authenticated...' };
+    }
+  }
+
+  @Get('google/logout')
+  async handleLogout(@Req() request: Request, @Session() session: Record<string, any>) {
+    if (request['user']) {
+      await session.destroy();
+      console.log(session.id);
+      return { msg: 'User logout...' };
+    } else {
+      return { msg: 'already logout...' };
+    }
   }
 }

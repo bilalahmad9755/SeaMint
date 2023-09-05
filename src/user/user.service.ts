@@ -2,8 +2,6 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { AddUserDto } from './dto/add-user';
-import { stringify } from 'querystring';
 
 // This should be a real class/interface representing a user entity
 
@@ -14,31 +12,20 @@ export class UserService {
     return this.userModel.find().exec();
   }
 
-  async getUserByAddress(walletAddress: string): Promise<User[]> {
-    return this.userModel.find({ walletAddress }).exec();
+  async getUserByEmail(email: string): Promise<User> {
+    return this.userModel.findOne({ email }).exec();
   }
 
-  async addUser(addUserDto: AddUserDto) {
-    // check for duplicated ethereum address...
-    const walletAddress = await this.userModel.findOne({
-      walletAddress: addUserDto.walletAddress,
-    }).exec();
-    console.log("duplicated record: ", walletAddress);
-    if (walletAddress !== null) {
-      throw new HttpException('user duplication', 500);
+  async addOAuthUser(userProfile: any) {
+    const newUser = new this.userModel(userProfile);
+    newUser.save();
+  }
+
+  async getUniqueUser(email: string): Promise<User> {
+    try {
+      return await this.userModel.findOne({ email }).exec();
+    } catch (error) {
+      return null;
     }
-    const addUser = new this.userModel(addUserDto);
-    const saved = await addUser.save();
-    console.log("data saved: ", saved);
-    return;
-  }
-
-  async getUserByName(name: string): Promise<User[]> {
-    return this.userModel.find({ name }).exec();
-  }
-
-  async validateUser(walletAddress: string, password: string): Promise<User>
-  {
-    return await this.userModel.findOne({walletAddress, password});
   }
 }

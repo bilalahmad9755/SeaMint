@@ -7,7 +7,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from '../user/schemas/user.schema';
 import { INestApplication, HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
-import { HttpStatusCode } from 'axios';
 
 /**
  * @note test-db should be empty to run all tests smoothly...
