@@ -4,8 +4,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
-import * as passport from 'passport-google-oauth20';
-
+import * as connectMongo from 'connect-mongodb-session';
+import passport = require('passport');
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -32,19 +32,25 @@ async function bootstrap() {
    */
 
   app.setGlobalPrefix('api');
-
+  const MongoDBStore = connectMongo(session);
   app.use(
     session({
-      name: "NEST_SESSION_ID",
+      name: 'session',
       secret: process.env.SESSION_SECRET_KEY,
       resave: false,
       saveUninitialized: false,
-      secure: true,
       cookie: {
-        maxAge: 60000,
+        maxAge: 300000,
       },
+      store: new MongoDBStore({
+        uri: 'mongodb://seamint-db:27017/seaMint', // Replace with your MongoDB connection URI
+        collection: 'session', // Specify the name of the collection to store sessions in
+      })
     }),
   );
+
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   await app.listen(3000);
 }
