@@ -7,7 +7,8 @@ export class GoogleAuthGuard extends AuthGuard('google') {
     console.log('google guard executing...');
     const activate = (await super.canActivate(context)) as boolean;
     const request = context.switchToHttp().getRequest();
-    await super.logIn(request);
+    console.log("executing Guard login function");
+    await super.logIn(request);// it will call serialize or deserialize session...after the authentication...
     return activate;
   }
 }
