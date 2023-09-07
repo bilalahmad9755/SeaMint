@@ -4,11 +4,14 @@ import { ProductsService } from './products.service';
 import { BuyProductDto } from './dto/buy-product';
 import { Response } from 'express';
 import { AuthGuard } from 'src/auth/utils/auth.AuthGuard';
+import { Roles } from 'src/user/user.roles';
+import { UserRoles } from 'src/user/user.role';
 @Controller('products')
 export class ProductsController {
   constructor(private productService: ProductsService) {}
   @Post('add')
-  @UseGuards(AuthGuard)
+  // @Roles(UserRoles.Admin)
+  // @UseGuards(AuthGuard)
   // user must have admin role to add product...
   async addProducts(@Body() addProductDto: AddProductDto) {
     await this.productService.addProduct(addProductDto);
