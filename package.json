@@ -42,6 +42,7 @@
     "generate-password": "^1.7.0",
     "mongoose": "^7.3.4",
     "moralis": "^2.22.4",
+    "nest-access-control": "^3.0.0",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-http": "^0.3.0",
@@ -50,6 +51,7 @@
     "posix": "^4.2.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "stripe": "^13.4.0",
     "web3": "^4.0.3"
   },
   "devDependencies": {

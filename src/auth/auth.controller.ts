@@ -26,7 +26,7 @@ export class AuthController {
     return { msg: 'OAuth login successfull...' };
   }
 
-  @Get('session/')
+  @Get('sessions')
   @UseGuards(AuthGuard)
   async handleSession(
     @Req() request: Request,

@@ -16,7 +16,7 @@ async function bootstrap() {
     .addTag('Nest Project...')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('swagger', app, document);
   /**
    * @note using global validation pipe will enable all validations on Schemas and Dtos...
    * setting whitelist means extra fields in DTO will be excluded...
@@ -40,7 +40,7 @@ async function bootstrap() {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        maxAge: 300000,
+        maxAge: 3000000,
       },
       store: new MongoDBStore({
         uri: 'mongodb://seamint-db:27017/seaMint', // Replace with your MongoDB connection URI
