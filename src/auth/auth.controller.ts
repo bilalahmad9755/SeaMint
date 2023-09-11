@@ -1,5 +1,5 @@
-import { Controller, Req, UseGuards, Get, Session } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Controller, Req, UseGuards, Get, Session, Res } from '@nestjs/common';
+import { Request, Response, response } from 'express';
 import { GoogleAuthGuard } from './utils/auth.GoogleAuthGuard';
 import { AuthGuard } from './utils/auth.AuthGuard';
 @Controller('auth')
@@ -8,9 +8,9 @@ export class AuthController {
 
   @Get('google/login')
   @UseGuards(GoogleAuthGuard)
-  async handleGoogleLogin() {
-    console.log('google login...');
-    return { message: 'google login...' };
+  async handleGoogleLogin(@Req() request: Request, @Res() response: Response) {
+    //response.set('Access-Control-Allow-Origin', 'http://localhost:3001');
+    response.status(200);
   }
 
   @Get('google/redirect')
@@ -18,13 +18,12 @@ export class AuthController {
   async handleGoogleRedirect(
     @Req() req: Request,
     @Session() session: Record<string, any>,
+    @Res() response: Response
   ) {
-    console.log('session in redirect: ', session);
-    console.log('session in redirect: ', req['sessionID']);
-    // return session to client for next frequent calls...
-    session.authenticated = true;
-    return { msg: 'OAuth login successfull...' };
+    console.log("request user: ", req.user);
+    response.redirect("http://localhost:3001");
   }
+  
 
   @Get('sessions')
   @UseGuards(AuthGuard)

@@ -4,14 +4,13 @@ import { ProductsService } from './products.service';
 import { BuyProductDto } from './dto/buy-product';
 import { Response } from 'express';
 import { AuthGuard } from 'src/auth/utils/auth.AuthGuard';
-import { Roles } from 'src/user/user.roles';
-import { UserRoles } from 'src/user/user.role';
+import { AdminGuard } from 'src/auth/utils/auth.RoleGuard';
+import { Product } from './schemas/product.schema';
 @Controller('products')
 export class ProductsController {
   constructor(private productService: ProductsService) {}
   @Post('add')
-  // @Roles(UserRoles.Admin)
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   // user must have admin role to add product...
   async addProducts(@Body() addProductDto: AddProductDto) {
     await this.productService.addProduct(addProductDto);
@@ -19,7 +18,7 @@ export class ProductsController {
   }
 
   @Post('buy')
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   async buyProduct(
     @Body() buyProductDto: BuyProductDto,
     @Res() response: Response,
@@ -28,8 +27,14 @@ export class ProductsController {
       buyProductDto,
     );
     console.log('payment link: ', paymentLink);
-    response.redirect(paymentLink);
-    return { msg: 'product Purchase Successful...' };
+    // response.redirect(paymentLink);
+    response.status(200).json({ data: paymentLink });
+  }
+
+  @Get('allProducts')
+  async getProducts():Promise<Product[]>
+  {
+    return await this.productService.getAllProducts();
   }
 
   @Get('buy/success')

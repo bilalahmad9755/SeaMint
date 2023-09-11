@@ -16,14 +16,16 @@ export class AuthService {
     return user;
   }
 
-  async validateOAuthUser(profile: any) {
+  async validateOAuthUser(profile: any): Promise<User> {
     const user = await this.userService.getUniqueUser(profile.emails[0].value);
     if (user === null) {
-      await this.userService.addOAuthUser({
+      const newUser = await this.userService.addOAuthUser({
         email: profile.emails[0].value,
         name: profile.displayName,
+        role: "user"
       });
+      return newUser
     }
-    return true;
+    return user;
   }
 }

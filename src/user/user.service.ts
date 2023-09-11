@@ -18,7 +18,8 @@ export class UserService {
 
   async addOAuthUser(userProfile: any) {
     const newUser = new this.userModel(userProfile);
-    newUser.save();
+    await newUser.save();
+    return newUser;
   }
 
   async getUniqueUser(email: string): Promise<User> {

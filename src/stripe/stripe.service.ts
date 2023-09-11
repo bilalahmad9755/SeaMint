@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';import { BuyProductDto } from 'src/products/dto/buy-product';
 
 const stripe = require('stripe')(
   'sk_test_51NnI2GAogJxLO5L5HGYv4RFsY1uaSvOVAN2g3VkECnc9uhSQ3woRJZ1Fn0jhgvPfrtuwxSHyb0H3rVPDuTnwoMiK00cxRlIbX2',
@@ -18,17 +18,17 @@ export class StripeService {
     return { productId: product.id, priceId: product.default_price.id };
   }
 
-  async paymentSession(priceId: string, quantity: string) {
+  async paymentSession(buyProductDto: BuyProductDto) {
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
-          price: priceId,
-          quantity: parseInt(quantity),
+          price: buyProductDto.priceId,
+          quantity: parseInt(buyProductDto.quantity),
         },
       ],
       mode: 'payment',
-      success_url: 'http://localhost:3000/api/products/buy/success',
-      cancel_url: 'http://localhost:3000/api/products/buy/failure',
+      success_url: 'http://localhost:3001',
+      cancel_url: 'http://localhost:3001',
     });
 
     return session.url;

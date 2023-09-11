@@ -31,8 +31,12 @@ export class ProductsService {
   async buyProduct(buyProductDto: BuyProductDto) {
     // creating session first then redirect to checkout url...
     return await this.stripeService.paymentSession(
-      buyProductDto.priceId,
-      buyProductDto.quantity,
+      buyProductDto
     );
+  }
+
+  async getAllProducts(): Promise<Product[]>
+  {
+    return await this.productModel.find().exec();
   }
 }
