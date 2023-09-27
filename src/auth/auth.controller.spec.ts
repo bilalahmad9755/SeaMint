@@ -2,115 +2,63 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
-import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from '../user/schemas/user.schema';
-import { INestApplication, HttpStatus } from '@nestjs/common';
-import * as request from 'supertest';
-
-/**
- * @note test-db should be empty to run all tests smoothly...
- */
+import { INestApplication } from '@nestjs/common';
+import { SessionSerializer } from './utils/auth.Serailizer';
+import { UserModule } from '../user/user.module';
+import { PassportModule } from '@nestjs/passport';
+import { Request, Response } from 'express';
 
 describe('AuthController', () => {
   let app: INestApplication;
+  const mockGoogleStrategy = jest.fn().mockImplementation(() => {
+    return {
+      authenticate: jest.fn().mockResolvedValue({
+        email: 'test@example.com',
+        name: 'Test User',
+      }),
+    };
+  });
+
+  // Create a mock response object.
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
-      providers: [AuthService, UserService, JwtService],
+      providers: [
+        AuthService,
+        UserService,
+        mockGoogleStrategy,
+        SessionSerializer,
+      ],
       imports: [
-        MongooseModule.forRoot('mongodb://seamint-db:27017/test-db'),
+        UserModule,
+        PassportModule.register({
+          defaultStrategy: 'google',
+          session: true,
+        }),
+        MongooseModule.forRoot('mongodb://localhost:27017/test-db'),
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
       ],
     }).compile();
     app = module.createNestApplication();
     await app.init();
-  });
+  }, 100000);
 
-  afterAll(async () => {
-    await app.close();
-  });
-
-  it('should signup successfully:', async () => {
-    const signupDto = {
-      name: 'bilal',
-      password: '12345',
-      walletAddress: '0xc2E382BD2a62f49C95b14EEA766F2Ba14Ae1f98D',
-    };
-    const response = await request(app.getHttpServer())
-      .post('/auth/signup')
-      .send(signupDto)
-      .expect(HttpStatus.CREATED);
-    expect(response.body).toEqual([{ message: 'signin successful' }]);
-  });
-
-  it('should login successfully:', async () => {
-    const loginDto = { username: 'bilal', password: '12345' };
-    const response = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send(loginDto)
-      .expect(HttpStatus.OK);
-    expect(response.body[0].message).toEqual('login successful');
-  });
-  it('should throw user duplication:', async () => {
-    const signupDto = {
-      name: 'bilal',
-      password: '12345',
-      walletAddress: '0xc2E382BD2a62f49C95b14EEA766F2Ba14Ae1f98D',
-    };
-    const response = await request(app.getHttpServer())
-      .post('/auth/signup')
-      .send(signupDto)
-      .expect(HttpStatus.INTERNAL_SERVER_ERROR);
-    expect(response.body).toEqual({
-      statusCode: 500,
-      message: 'user duplication',
+  it('google authentication', async() => {
+    let authController: AuthController = new AuthController();
+    let request:  Request;
+    let response;
+    
+    response = jest.fn();
+    response.status = jest.fn().mockReturnValue({
+      json: jest.fn(),
     });
-  });
+    const authResponse = await authController.handleGoogleLogin(request, response);
+    expect(response).toBe(200);
 
-  it('should check empty input fields: ', async () => {
-    const loginDto = { username: '', password: '12345' };
-    const response = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send(loginDto)
-      .expect(HttpStatus.BAD_REQUEST);
-    expect(response.body).toEqual({
-      message: ['username should not be empty'],
-      error: 'Bad Request',
-      statusCode: 400,
-    });
   });
-
-  it('should check for wrong input type: ', async () => {
-    const loginDto = { username: 'bilal', password: 12345 };
-    const response = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send(loginDto)
-      .expect(HttpStatus.BAD_REQUEST);
-    expect(response.body).toEqual({
-      message: [
-        'password must be longer than or equal to 5 characters',
-        'password must be a string',
-      ],
-      error: 'Bad Request',
-      statusCode: 400,
-    });
-  });
-
-  it('should validate ethereum address: ', async () => {
-    const signupDto = {
-      name: 'bilal',
-      password: '12345',
-      walletAddress: '0x00000000000000000000abc',
-    };
-    const response = await request(app.getHttpServer())
-      .post('/auth/signup')
-      .send(signupDto)
-      .expect(HttpStatus.BAD_REQUEST);
-    expect(response.body).toEqual({
-      message: 'Invalid Ethereum address',
-      error: 'Bad Request',
-      statusCode: 400,
-    });
-  });
+  // afterAll(async () => {
+  //   await app.close();
+  // });
 });

@@ -18,6 +18,7 @@ export class ProductsController {
   }
 
   @Post('buy')
+  @UseGuards(AuthGuard)
   //@UseGuards(AuthGuard)
   async buyProduct(
     @Body() buyProductDto: BuyProductDto,

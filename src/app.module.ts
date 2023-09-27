@@ -41,6 +41,7 @@ import { Product, ProductSchema } from './products/schemas/product.schema';
     StripeModule,
     AccessControlModule.forRoles(roles),
     PassportModule.register({
+      defaultStrategy: 'google',
       session: true,
     }),
     StripeModule,

@@ -14,6 +14,7 @@ async function bootstrap() {
       origin: "http://localhost:3001",
       credentials: true,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept'
     };
     app.enableCors(corsOptions);
   const config = new DocumentBuilder()
